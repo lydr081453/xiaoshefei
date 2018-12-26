@@ -2,15 +2,17 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\User;
+use App\Models\Category;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Log;
+use DB;
 
-class UserController extends Controller
+class CategoryController extends Controller
 {
     use HasResourceActions;
 
@@ -79,14 +81,13 @@ class UserController extends Controller
      */
     protected function grid()
     {
-        $grid = new Grid(new User);
+        $grid = new Grid(new Category);
 
         $grid->id('Id');
-        $grid->column('name','名称');
-        $grid->email('Email');
-        $grid->email_verified_at('Email verified at');
-        $grid->password('Password');
-        $grid->remember_token('Remember token');
+        $grid->title('Title');
+        $grid->desc('Desc');
+        $grid->level('Level');
+        $grid->parent_id('Parent_id');
         $grid->created_at('Created at');
         $grid->updated_at('Updated at');
 
@@ -101,14 +102,13 @@ class UserController extends Controller
      */
     protected function detail($id)
     {
-        $show = new Show(User::findOrFail($id));
+        $show = new Show(Category::findOrFail($id));
 
         $show->id('Id');
-        $show->name('Name');
-        $show->email('Email');
-        $show->email_verified_at('Email verified at');
-        $show->password('Password');
-        $show->remember_token('Remember token');
+        $show->title('Title');
+        $show->desc('Desc');
+        $show->level('Level');
+        $show->parent_id('Parent_id');
         $show->created_at('Created at');
         $show->updated_at('Updated at');
 
@@ -122,14 +122,24 @@ class UserController extends Controller
      */
     protected function form()
     {
-        $form = new Form(new User);
+        $form = new Form(new Category);
 
-        $form->text('name', 'Name');
-        $form->email('email', 'Email');
-        $form->datetime('email_verified_at', 'Email verified at')->default(date('Y-m-d H:i:s'));
-        $form->password('password', 'Password');
-        //$form->text('remember_token', 'Remember token');
+        $form->text('title', 'Title');
+        $form->text('desc', 'Desc');
 
+        $menuModel = \App\Models\Category::class;
+        $form->select('parent_id', "上级分类")->options($menuModel::selectOptions(null,"无"));
+
+        $form->saving(function (Form $form) {
+            $parentid = $form->parent_id;
+            if($parentid != 0){
+                $parent = Category::findOrFail($parentid);
+                $form->level = $parent->level + 1;
+            }
+
+        });
         return $form;
     }
+
+
 }
