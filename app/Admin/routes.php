@@ -16,6 +16,7 @@ Route::group([
     $router->resource('categories', CategoryController::class);
     $router->resource('brands', BrandController::class);
     $router->resource('products', ProductController::class);
+    $router->resource('photos', PhotoController::class);
 });
 
 

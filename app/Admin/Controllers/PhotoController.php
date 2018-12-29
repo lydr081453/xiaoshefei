@@ -2,17 +2,15 @@
 
 namespace App\Admin\Controllers;
 
-use App\Models\Category;
+use App\Models\Photo;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
-use Log;
-use DB;
 
-class CategoryController extends Controller
+class PhotoController extends Controller
 {
     use HasResourceActions;
 
@@ -81,13 +79,16 @@ class CategoryController extends Controller
      */
     protected function grid()
     {
-        $grid = new Grid(new Category);
+        $grid = new Grid(new Photo);
 
         $grid->id('Id');
+        $grid->type('Type');
+        $grid->photourl('Photourl');
         $grid->title('Title');
-        $grid->desc('Desc');
-        $grid->level('Level');
-        $grid->parent_id('Parent_id');
+        $grid->isshow('Isshow');
+        $grid->position('Position');
+        $grid->linkurl('Linkurl');
+        $grid->key('Key');
         $grid->created_at('Created at');
         $grid->updated_at('Updated at');
 
@@ -102,13 +103,16 @@ class CategoryController extends Controller
      */
     protected function detail($id)
     {
-        $show = new Show(Category::findOrFail($id));
+        $show = new Show(Photo::findOrFail($id));
 
         $show->id('Id');
+        $show->type('Type');
+        $show->photourl('Photourl');
         $show->title('Title');
-        $show->desc('Desc');
-        $show->level('Level');
-        $show->parent_id('Parent_id');
+        $show->isshow('Isshow');
+        $show->position('Position');
+        $show->linkurl('Linkurl');
+        $show->key('Key');
         $show->created_at('Created at');
         $show->updated_at('Updated at');
 
@@ -122,26 +126,17 @@ class CategoryController extends Controller
      */
     protected function form()
     {
-        $form = new Form(new Category);
+        $form = new Form(new Photo);
 
+        //$form->text('type', 'Type');
+        $form->select('type','类型')->options(['banner'=>'banner','index'=>'index']);
+        $form->image('photourl', '图片');
         $form->text('title', 'Title');
-        $form->text('desc', 'Desc');
-        $form->hidden('level','Level');
+        $form->switch('isshow', 'Isshow');
+        $form->number('position', 'Position');
+        $form->text('linkurl', 'Linkurl');
+        $form->text('key', 'Key');
 
-        $menuModel = \App\Models\Category::class;
-        $form->select('parent_id', "上级分类")->options($menuModel::selectOptions(null));
-        $form->saving(function (Form $form) {
-            $parentid = $form->parent_id;
-            if($parentid != 0){
-                $parent = Category::findOrFail($parentid);
-                $form->level = $parent->level + 1;
-            }else{
-                $form->level = 0;
-            }
-
-        });
         return $form;
     }
-
-
 }

@@ -27,6 +27,7 @@ class CreateProductsTable extends Migration
             $table->boolean('issell');
             $table->boolean('isTop');
             $table->string('picurl');
+            $table->string('keys');
             $table->timestamps();
         });
     }

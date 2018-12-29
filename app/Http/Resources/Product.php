@@ -15,8 +15,7 @@ class Product extends JsonResource
      */
     public function toArray($request)
     {
-        //$brand = $this->brand;
-        //Log::Info($brand->name);
+        //Log::info($this.toArray());
         return [
             'id'=>$this->id,
             'name'=>$this->name,
@@ -26,7 +25,7 @@ class Product extends JsonResource
             'unit'=>$this->unit,
             'stock'=>$this->stock,
             'brandid'=>$this->brandid,
-            'brandname'=>$this->brand->name,
+            //'brandname'=>$this->brand->name,
             'picurl'=>$this->picurl,
         ];
     }
